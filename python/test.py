@@ -1,4 +1,4 @@
-""" import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 # 绘制数据
 plt.plot([1, 2, 3, 4], [5, 6, 7, 8])
@@ -33,6 +33,6 @@ print( list[2] )
 # 打印列表中的最后一个、倒数第二个和倒数第三个元素
 print( list[-1] )
 print( list[-2] )
-print( list[-3] ) """
+print( list[-3] )
 
-print("This is the end of the test file")
+# print("This is the end of the test file")
