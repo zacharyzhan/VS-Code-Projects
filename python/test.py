@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+""" import matplotlib.pyplot as plt
 
 # 绘制数据
 plt.plot([1, 2, 3, 4], [5, 6, 7, 8])
@@ -35,4 +35,20 @@ print( list[-1] )
 print( list[-2] )
 print( list[-3] )
 
-# print("This is the end of the test file")
+# print("This is the end of the test file") """
+
+ 
+""" 
+# 该脚本用于演示 Python 中的 if 语句的条件判断。 
+
+
+var1 = 100
+if var1:
+    print ("1 - if 表达式条件为 true")
+    print (var1)
+
+var2 = 0
+if var2:
+    print ("2 - if 表达式条件为 true")
+    print (var2)
+print ("Good bye!") """
