@@ -11,10 +11,14 @@ model = tf.keras.models.load_model('./best_model.h5')
 def predict_images(image_folder):
     results = []
 
-    for filename in os.listdir(image_folder):
+    # 获取文件名并按字典序升序排序，区分大小写
+    image_files = sorted([f for f in os.listdir(image_folder) if f.endswith('.jpg') or 
+                        f.endswith('.png')], key=lambda s: s.lower())
+            
+    for filename in image_files:
         if filename.endswith('.jpg') or filename.endswith('.png'):  # 可以根据需要调整图片格式
             img_path = os.path.join(image_folder, filename)
-            
+
             # 读取并处理图片
             img = image.load_img(img_path, target_size=(128, 128))  # 根据模型调整大小
             img_array = image.img_to_array(img)
@@ -22,11 +26,12 @@ def predict_images(image_folder):
             
             # 进行预测
             predictions = model.predict(img_array)
-            # 根据预测结果确定预测类别
-            predicted_class = np.argmax(predictions, axis=1)[0]
-            
+            # 根据概率判断类别
+            predicted_class = 1 if predictions[0][0] >= 0.5 else 0
+            # 去掉文件扩展名
+            img_name_without_ext = os.path.splitext(os.path.basename(img_path))[0]
             # 保存结果
-            results.append({'filename': filename, 'predicted_class': predicted_class})
+            results.append({'filename': img_name_without_ext, 'predicted_class': predicted_class})
 
     return results
 
