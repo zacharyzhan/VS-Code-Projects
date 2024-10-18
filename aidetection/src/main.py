@@ -1,18 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 import os
 import tensorflow as tf
 import pandas as pd
 from tensorflow.keras.preprocessing import image
 import numpy as np
-
-
-# In[2]:
-
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -22,16 +15,8 @@ if gpus:
     except RuntimeError as e:
         print(e)
 
-
-# In[3]:
-
-
 # 加载预训练模型
 model = tf.keras.models.load_model('../output/model3.h5')
-
-
-# In[4]:
-
 
 # 读取图片并进行预测
 def predict_images(image_folder):
@@ -69,10 +54,8 @@ predicted_results = predict_images(image_folder)
 # 将结果写入output.csv
 df = pd.DataFrame(predicted_results)
 df.to_csv('../cla_pre.csv', index=False, header=False)
-print('ok')
+# print('ok')
 
-
-# In[ ]:
 
 
 
