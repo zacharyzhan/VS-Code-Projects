@@ -1,27 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+
 # # 1. Environment
-
-# ## 1.1 Kaggle environment
-
-# import os
-# import shutil
-
-# os.mkdir("/kaggle/working/code")
-# os.mkdir("/kaggle/working/model")
-# os.mkdir("/kaggle/working/output")
-# shutil.copyfile(src="/kaggle/input/models-with-code/code/swin_transformer_v2.py", 
-#                 dst="/kaggle/working/code/swin_transformer_v2.py")
-# shutil.copyfile(src="/kaggle/input/models-with-code/model/swinv2_tiny_patch4_window16_256.pth", 
-#                 dst="/kaggle/working/model/swinv2_tiny_patch4_window16_256.pth")
-# os.chdir("/kaggle/working/code")
-
-# %config Completer.use_jedi = False
 
 import gc
 import random
-
+import os
+import timm
 import torch
 import warnings
 import torchvision
@@ -38,7 +24,6 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Dataset, sampler
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
-from swin_transformer_v2 import SwinTransformerV2
 
 
 # set random seeds to make results reproducible
@@ -57,8 +42,7 @@ seed_everything(SEED)
 warnings.filterwarnings("ignore")
 plt.rcParams.update({'axes.titlesize': 20})
 
-
-# ## 1.3 Arguments
+# ##  Arguments
 
 # We put hyperparameter together for easy modification.
 
@@ -66,29 +50,29 @@ class Args:
     def __init__(self) -> None:
         # data arguments
         self.num_classes = 2
-        self.img_size = 256
+        self.img_size = 224
         self.num_train_data = 10000
         self.num_test_data = 2000
-        self.dataset_path = "../input/real-vs-fake/"
+        self.dataset_path = "../input/mixed/"
         
         # training arguments
         self.learning_rate =  1e-4
-        self.epochs = 10
+        self.epochs = 30
         self.scheduler = True
         self.sch_step_size = 2
         self.sch_gamma = 0.1
         
-        # model arguments
+        # model arguments  
         self.drop_path_rate = 0.2
         self.embed_dim = 96
         self.depths = (2, 2, 6, 2)
         self.num_heads = (3, 6, 12, 24)
         self.window_size = 16
         # self.load_model_path = "../input/swinv2_tiny_patch4_window16_256.pth"
-        self.save_model_path = "../output/pretarined_vit_base_patch16_224.pth"
+        self.save_model_path = "../output/mixed_vit_base_patch16_224.pth"
         
         # output arguments
-        self.output_path = "../output/pretrained_vit_base16/"
+        self.output_path = "../output/mixed_vit_base16/"
 
 
 args = Args()
@@ -170,29 +154,29 @@ valid_dataset = datasets.ImageFolder(root=args.dataset_path + "valid/", transfor
 indices = [random.randint(0, len(train_dataset)) for i in range(16)]
 
 
-# show raw training data
-figure = plt.figure(figsize=(16, 16))
-for i in range(16):
-    index = indices[i]
-    img = raw_dataset[index][0].permute(1, 2, 0)
-    label = idx_to_class[raw_dataset[index][1]]
-    figure.add_subplot(4, 4, i + 1)
-    plt.title(label)
-    plt.axis("off")
-    plt.imshow(img)
+# # show raw training data
+# figure = plt.figure(figsize=(16, 16))
+# for i in range(16):
+#     index = indices[i]
+#     img = raw_dataset[index][0].permute(1, 2, 0)
+#     label = idx_to_class[raw_dataset[index][1]]
+#     figure.add_subplot(4, 4, i + 1)
+#     plt.title(label)
+#     plt.axis("off")
+#     plt.imshow(img)
 
 
 
-# show augmented training data 
-figure = plt.figure(figsize=(16, 16))
-for i in range(16):
-    index = indices[i]
-    img = train_dataset[index][0].permute(1, 2, 0)
-    label = idx_to_class[train_dataset[index][1]]
-    figure.add_subplot(4, 4, i + 1)
-    plt.title(label)
-    plt.axis("off")
-    plt.imshow(img)
+# # show augmented training data 
+# figure = plt.figure(figsize=(16, 16))
+# for i in range(16):
+#     index = indices[i]
+#     img = train_dataset[index][0].permute(1, 2, 0)
+#     label = idx_to_class[train_dataset[index][1]]
+#     figure.add_subplot(4, 4, i + 1)
+#     plt.title(label)
+#     plt.axis("off")
+#     plt.imshow(img)
 
 
 # # 3. Model
@@ -203,7 +187,7 @@ for i in range(16):
 # 加载预训练的 ViT-base-patch16 模型
 model = timm.create_model('vit_base_patch16_224', pretrained=True)
 
-# 如果你有训练好的模型权重，则加载自定义权重
+# 如果有训练好的模型权重，则加载自定义权重
 # state_dict = torch.load(args.load_model_path)
 # model.load_state_dict(state_dict["model"])
 
@@ -213,28 +197,6 @@ model.head = torch.nn.Linear(model.head.in_features, args.num_classes)
 # 选择设备 (GPU 或 CPU)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
-
-
-# We will use pre-trained swin-transformer V2 model.
-# # load pretrained model
-# model = SwinTransformerV2(img_size=args.img_size,
-#                           drop_path_rate=args.drop_path_rate, 
-#                           embed_dim=args.embed_dim,
-#                           depths=args.depths,
-#                           num_heads=args.num_heads,
-#                           window_size=args.window_size)
-# state_dict = torch.load(args.load_model_path)
-# model.load_state_dict(state_dict["model"])
-
-
-# # change the last linear layer to fit our classification problem
-# model.head = torch.nn.Linear(model.head.in_features, args.num_classes)
-
-
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-# model = model.to(device)
 
 
 # ## 3.2 Optimizer

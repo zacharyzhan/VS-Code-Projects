@@ -3,31 +3,28 @@
 
 import os
 import torch
+import timm
 import pandas as pd
 from torchvision import transforms
 from PIL import Image
 import numpy as np
 from transformers import ViTForImageClassification, ViTImageProcessor
-
+# from transformers import ViTHybridImageProcessor, ViTHybridForImageClassification
 # 检查是否有可用的 GPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+# # 创建模型实例
+local_model_path = "../input/pretrained_vit_base16_model"
 
-# In[27]:
+model = ViTForImageClassification.from_pretrained(local_model_path, num_labels=2)# ,ignore_mismatched_sizes=True)
 
+##
+#重新初始化分类器层
+# model.classifier = torch.nn.Linear(model.config.hidden_size, 2)
+##
 
-# 加载预训练模型
-# model = torch.load('../output/vit_model.pth')
-# model = model.to(device)
-# model.eval()
-
-# 创建模型实例
-local_model_path = "../input/pretrained_vit_model"
-
-model = ViTForImageClassification.from_pretrained(local_model_path, num_labels=2)
-
-# 加载状态字典
-state_dict = torch.load('../output/vit_model.pth', map_location=device)
+# # 加载状态字典
+state_dict = torch.load('../output/vit_base16_model.pth',weights_only=True)#, map_location=device)
 
 # 将状态字典加载到模型中
 model.load_state_dict(state_dict)
@@ -37,6 +34,7 @@ model.to(device)
 
 # 设置为评估模式
 model.eval()
+
 
 # 加载图像处理器
 image_processor = ViTImageProcessor.from_pretrained(local_model_path)
@@ -70,7 +68,13 @@ def predict_images(image_folder):
             logits = outputs.logits
             _, predicted = torch.max(logits, 1)
             predicted_class = predicted.item()
-        
+
+        ### 互换标签
+        if predicted_class == 0:
+            predicted_class = 1
+        elif predicted_class == 1:
+            predicted_class = 0
+        ###
         predicted_results[image_name] = predicted_class
     return predicted_results
 
@@ -92,9 +96,8 @@ sorted_predicted_results = sorted(
 df = pd.DataFrame(sorted_predicted_results, columns=['ImageName', 'PredictedClass'])
 
 # 将结果写入output.csv
-df.to_csv('../cla_pre.csv', index=False, header=False)
+df.to_csv('../cla_pre_vit_base16_testdata_b.csv', index=False, header=False, encoding='utf-8')
 print('ok')
-
 
 
 
