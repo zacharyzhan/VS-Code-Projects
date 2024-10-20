@@ -1,7 +1,7 @@
 import pandas as pd
 
 # 读取CSV文件
-df = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vit_base_r50_s16_384.csv", header=None)
+df = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vit_base16_mixed_202410191600_mixed.csv")
 
 # 假设第二列的名称是 'column_2'，将 0 和 1 互换
 df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: 1 if x == 0 else 0)
