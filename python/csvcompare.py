@@ -2,7 +2,9 @@ import pandas as pd
 
 # 读取两个CSV文件
 df1 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre.csv")
-df2 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vgg_mixed.csv")
+df2 = pd.read_csv('output_file.csv')
+
+# df2 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vgg_mixed.csv")
 
 # 检查df1第一列的值是否在df2第一列中存在，并比较第二列的值
 result = []
