@@ -1,10 +1,10 @@
 import pandas as pd
 
 # 读取两个CSV文件
-df1 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre.csv")
+df2 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vit_base16_mixed_202410222100_mixed.csv")
 # df2 = pd.read_csv('output_file.csv')
 
-df2 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vit_base16_mixed_202410222000_mixed.csv")
+df1 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre.csv")
 
 # 检查df1第一列的值是否在df2第一列中存在，并比较第二列的值
 result = []
