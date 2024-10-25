@@ -1,7 +1,7 @@
 import pandas as pd
 
 # 读取两个CSV文件
-df2 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_vit_base16_mixed_202410222100_mixed.csv")
+df2 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre_ssa.csv")
 # df2 = pd.read_csv('output_file.csv')
 
 df1 = pd.read_csv(r"C:\Users\zacha\Desktop\cla_pre.csv")
