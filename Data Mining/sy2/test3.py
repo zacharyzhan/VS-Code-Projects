@@ -20,8 +20,6 @@ df = df.pivot(index='Transaction', columns='Value', values='Item').notnull().ast
 frequent_itemsets = apriori(df, min_support=0.6, use_colnames=True)
 
 # Generate the association rules
-# rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
-# # 生成关联规则
 rules = association_rules(frequent_itemsets, metric="lift", min_threshold=0.7, num_itemsets=len(frequent_itemsets))
 # Print the results
 print(frequent_itemsets)
